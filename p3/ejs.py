@@ -6,6 +6,7 @@ import random
 from scipy.fftpack import ifft2, fft2
 from scipy import misc
 import sys
+import ecualizacion.py as equ
 
 def ej1a():
     N = 8
@@ -152,6 +153,9 @@ def assemble_complex(norm, angle):
 def IFFT_TO_UINT8(ifft_img):
     return np.uint8(np.real(ifft_img))
 
+def FFT_NORM_EQU(img):
+    return equ.ecualizacion(np.uint8(np.divide(img, np.amax(img))))
+
 def ej4():
     if len(sys.argv) != 3:
         print("faltan params")
@@ -171,7 +175,7 @@ def ej4():
 
     plt.subplot(1,3,1)
     plt.title("tomo la norma de aca")
-    plt.imshow(im1_norm, cmap='gray')
+    plt.imshow(FFT_NORM_EQU(im1_norm), cmap='gray')
 
     plt.subplot(1,3,2)
     plt.title("tomo phase angle de aca")
