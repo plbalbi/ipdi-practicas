@@ -99,27 +99,29 @@ def IDFT(F):
     return f
 
 def DFT_2D(f):
-    N = len(f)
-    F = [[None]*N]*N
+    M = len(f)
+    N = len(f[0])
+    F = np.zeros((M,N))
 
-    for k in range(N):
-        for l in range(N):
+    for u in range(M):
+        for v in range(N):
             suma = 0
-            for n in range(N):
-                for m in range(N):
-                    suma += f[m][n]*np.exp(-2j*math.pi*(m*k+n*l)/N)
-            F[k][l] = suma/N
+            for x in range(M):
+                for y in range(N):
+                    suma += f[x][y]*np.exp(-2j*math.pi*((u*x/M) + (v*y/N)))
+            F[u][v] = suma/(N*M)
     return F
 
 def IDFT_2D(F):
-    N = len(F)
-    f = [[None]*N]*N
+    M = len(F)
+    N = len(F[0])
+    f = np.zeros((M,N))
 
-    for k in range(N):
-        for l in range(N):
+    for x in range(M):
+        for y in range(N):
             suma = 0
-            for n in range(N):
-                for m in range(N):
-                    suma += F[m][n]*np.exp(2j*math.pi*(m*k+n*l)/N)
-            f[k][l] = suma/N
+            for u in range(M):
+                for v in range(N):
+                    suma += F[u][v]*np.exp(-2j*math.pi*((u*x/M) + (v*y/N)))
+            f[x][y] = suma
     return f
