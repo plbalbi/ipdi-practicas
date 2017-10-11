@@ -1,5 +1,4 @@
 import fourier
-# import seaborn as sns
 import math
 from matplotlib import pyplot as plt
 import numpy as np
@@ -192,11 +191,12 @@ def ej4():
 
     plt.subplot(1,3,1)
     plt.title("tomo la norma de aca")
-    plt.imshow(im2, cmap='gray')
+    plt.imshow(np.divide(im2_norm, np.amax(im2_norm)), cmap='gray', vmin=0, vmax=1)
+    print(np.divide(im2_norm, np.amax(im2_norm)))
 
     plt.subplot(1,3,2)
     plt.title("tomo phase angle de aca")
-    plt.imshow(im1, cmap='gray')
+    plt.imshow(im1_angle, cmap='gray')
 
     plt.subplot(1,3,3)
     plt.title("resultado de la comoposicion de ambas")
@@ -219,5 +219,17 @@ def ej4():
 
     # print(np.uint8(np.real(temp)))
 
+def ej5():
+    lena_route = "../ImagenesHistograma/lena.png"
+    lena_img = misc.imread(lena_route)
+    lena_FFT = fft2(lena_img)
+    # lineas horizontales
+
+    lena_FFT[50][0] += 1.5e6  
+
+    img = IFFT_TO_UINT8(ifft2(lena_FFT))
+
+    plt.imshow(img, cmap='gray')
+    plt.show()
 
 ej4()
