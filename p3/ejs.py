@@ -6,7 +6,7 @@ import random
 from scipy.fftpack import ifft2, fft2
 from scipy import misc
 import sys
-import ecualizacion.py as equ
+import ecualizacion as equ
 
 def ej1a():
     N = 8
@@ -156,6 +156,21 @@ def IFFT_TO_UINT8(ifft_img):
 def FFT_NORM_EQU(img):
     return equ.ecualizacion(np.uint8(np.divide(img, np.amax(img))))
 
+def equ_feo_fft(img):
+    img_size = len(img)*len(img[0])
+    dtype = [('value', float),('i', int),('j', int)]
+    nums = np.empty(img_size, dtype=dtype)
+    for i in range(len(img)):
+        for j in range(len(img[0])):
+            # nums[i*len(img[0])+j] = [img[i][j],(i,j)]
+            nums[i*len(img[0])+j]['value'] = img[i][j]
+            nums[i*len(img[0])+j]['i'] = i
+            nums[i*len(img[0])+j]['j'] = j
+    nums = np.sort(nums, order='value')
+    for i in range(img_size):
+        img[nums[i][1]][nums[i][2]] = i/img_size
+    return img
+    
 def ej4():
     if len(sys.argv) != 3:
         print("faltan params")
@@ -175,7 +190,7 @@ def ej4():
 
     plt.subplot(1,3,1)
     plt.title("tomo la norma de aca")
-    plt.imshow(FFT_NORM_EQU(im1_norm), cmap='gray')
+    plt.imshow(equ_feo_fft(im1_norm), cmap='gray')
 
     plt.subplot(1,3,2)
     plt.title("tomo phase angle de aca")
@@ -195,8 +210,7 @@ def ej4():
 
     plt.subplot(1,3,1)
     plt.title("tomo la norma de aca")
-    plt.imshow(np.divide(im2_norm, np.amax(im2_norm)), cmap='gray', vmin=0, vmax=1)
-    print(np.divide(im2_norm, np.amax(im2_norm)))
+    plt.imshow(equ_feo_fft(im2_norm), cmap='gray')
 
     plt.subplot(1,3,2)
     plt.title("tomo phase angle de aca")
@@ -236,4 +250,15 @@ def ej5():
     plt.imshow(img, cmap='gray')
     plt.show()
 
-ej4()
+def test_norms():
+    img = misc.imread(sys.argv[1])
+    img_FFT = fft2(img)
+    plt.subplot(1,3,1)
+    plt.imshow(img, cmap='gray')
+    plt.subplot(1,3,2)
+    plt.imshow(equ_feo_fft(np.abs(img_FFT)),cmap='gray')
+    plt.subplot(1,3,3)
+    plt.imshow(np.angle(img_FFT),cmap='gray')
+    plt.show()
+
+test_norms()
