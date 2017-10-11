@@ -6,6 +6,7 @@ import numpy as np
 import random
 from scipy.fftpack import ifft2, fft2
 from scipy import misc
+from scipy import fftpack
 import sys
 
 def ej1a():
@@ -21,28 +22,29 @@ def ej1a():
         plt.plot(xx,yy)
         plt.plot(xx_d,yy_d,'ro')
         subplot+=1
+    plt.savefig('informe/imgs/1a.pdf')
     plt.show()
 
 
 def ej1b():
     N = 8
-    xx = np.arange(0.0, N, 0.1)
+    xx = np.arange(0.0, N, 0.05)
     xx_d = range(N)
 
     subplot = 1
-    for m in range(N):
-        for n in range(N):
+    for n in range(N):
+        for m in range(N):
             yyd = [np.real([np.exp(2j*math.pi*(m*k+n*l)/N) for k in xx_d]) for l in xx_d]
             plt.subplot(8,8,subplot)
             plt.axis('off')
             plt.imshow(yyd,cmap='gray')
             subplot += 1
 
-    plt.show()
+    plt.savefig('informe/imgs/1b.pdf')
 
 
 def ej2():
-    N = 15
+    N = 10
     x = []
     for i in range(N):
         x.append(random.randint(0,5))
@@ -71,6 +73,7 @@ def ej2():
     plt.plot(x_l,label='Sin frecuencias bajas')
     plt.plot(x_m,label='Sin frecuencias medias')
     plt.legend()
+    plt.savefig('informe/imgs/2.pdf')
     plt.show()
 
 def ej3():
@@ -120,22 +123,27 @@ def ej3():
     it = 0
     for img in imgs:
         plt.figure(figsize=(10,4))
-        plt.subplot(1,3,1)
+        plt.subplot(1,4,1)
         plt.title('Original')
         plt.axis('off')
         plt.imshow(img,cmap='gray')
-        plt.subplot(1,3,2)
+        plt.subplot(1,4,2)
         plt.axis('off')
-        plt.title('DFT')
+        plt.title('DFT (absoluto)')
+        plt.imshow(np.abs(fftpack.fft(img)),cmap='gray')
+        plt.subplot(1,4,3)
+        plt.axis('off')
+        plt.title('DFT (real)')
         plt.imshow(np.real(fftpack.fft(img)),cmap='gray')
-        plt.subplot(1,3,3)
+        plt.subplot(1,4,4)
         plt.axis('off')
-        plt.title('IDFT')
-        plt.imshow(np.real(fftpack.ifft((fftpack.fft(img))))  ,cmap='gray')
+        plt.title('DFT (ángulo)')
+        plt.imshow(np.angle(fftpack.fft(img)),cmap='gray')
         plt.suptitle('Imagen '+chr(97+it))
         plt.tight_layout()
+        plt.savefig('informe/imgs/3-'+chr(97+it))
         it += 1
-        plt.show()
+        # plt.show()
 
 def uncompress_cmpx(num):
     return complex_norm(num), np.angle(num)
@@ -220,4 +228,4 @@ def ej4():
     # print(np.uint8(np.real(temp)))
 
 
-ej4()
+ej2()
