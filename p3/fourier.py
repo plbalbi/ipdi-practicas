@@ -5,8 +5,8 @@ def convolve(I, m):
     # I es la imagen
     image_width = I.shape[1]
     image_heigth = I.shape[0]
-    # m es la máscara, debe ser de m x n
-    # size de la máscara
+    # m es la mascara, debe ser de m x n
+    # size de la mascara
     kern_m = m.shape[0] 
     kern_n = m.shape[1] 
     # kernel center
