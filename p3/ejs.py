@@ -3,6 +3,9 @@ import math
 from matplotlib import pyplot as plt
 import numpy as np
 import random
+from scipy.fftpack import ifft2, fft2
+from scipy import misc
+import sys
 
 def ej1a():
     N = 8
@@ -80,4 +83,32 @@ def ej3():
     print('\n')
     print(a_i)
 
-ej3()
+def complex_norm(X):
+    return np.sqrt(np.add( np.square(np.real(X)), np.square(np.imag(X))))
+
+def ej4():
+    if len(sys.argv) != 3:
+        print("faltan params")
+        sys.exit(1)
+    # fft2
+    im1 = misc.imread(sys.argv[1])
+    # im2 = imread(sys.argv[2])
+    im1_FT = fft2(im1)
+    print(im1_FT)
+    # im2_FT = fft2(im2)
+    
+    # te da el angulo del complex
+    # plt.imshow(np.angle(im1_FT))
+    im1_norms = complex_norm(im1_FT)
+    print(im1_norms)
+    plt.imshow(im1_norms, cmap='gray', vmin=0, vmax=np.amax(im1_norms))
+    plt.show()
+
+    temp = ifft2(im1_FT)
+    plt.imshow(np.uint8(np.real(temp)), cmap='gray')
+    plt.show()
+
+    # print(np.uint8(np.real(temp)))
+
+
+ej4()

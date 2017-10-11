@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import misc
+from scipy.fftpack import ifftn, fftn
 from matplotlib import pyplot as plt
 import sys
 import math
