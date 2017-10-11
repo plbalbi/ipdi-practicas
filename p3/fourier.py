@@ -2,6 +2,7 @@ import numpy as np
 from scipy import misc
 from matplotlib import pyplot as plt
 import sys
+import math
 
 # convolucion
 def convolve(I, m):
@@ -11,8 +12,8 @@ def convolve(I, m):
     image_heigth = I.shape[0]
     # m es la mascara, debe ser de m x n
     # size de la mascara
-    kern_m = m.shape[0] 
-    kern_n = m.shape[1] 
+    kern_m = m.shape[0]
+    kern_n = m.shape[1]
     # kernel center
     kern_m_center = int((kern_m-1)/2)
     kern_n_center = int((kern_n-1)/2)
@@ -53,13 +54,13 @@ def convolve(I, m):
                         #TODO: doy con borde izq
                         # IM = [0]*cantidad que se va de rango + pedazo de la imagen que no se va
                         IM = np.append([0]*(kern_n_center-j), I[i+row_index,range(0,kern_n_indexes[-1]-j+1)])
-                    elif j in range(image_width-1-kern_n_center+1, image_width): 
+                    elif j in range(image_width-1-kern_n_center+1, image_width):
                         #[WIDTH - center , WIDTH -1]
                         #TODO: doy con borde der
                         # IM = pedazo de la imagen que no se va + [0]*cantidad que se va de rango
                         # image_width-1-j == 0 si j == image_width-1
                         # image_width-1-j == pixels que faltan hasta ultima posicion
-                        IM = np.append(I[i+row_index,range(j+kern_n_indexes[0], image_width)], [0]*(kern_n_center-(image_width-1-j))) 
+                        IM = np.append(I[i+row_index,range(j+kern_n_indexes[0], image_width)], [0]*(kern_n_center-(image_width-1-j)))
                     else:
                         # no doy con borde a los costados
                         IM = I[i+row_index,range((j+kern_n_indexes[0]),(j+kern_n_indexes[-1])+1)]
@@ -75,3 +76,24 @@ def convolve(I, m):
                         sys.exit(1)
             res_image[i,j] = local_sum
     return res_image
+
+def DFT(f):
+    N = len(f)
+    F = [None]*N
+
+    for k in range(N):
+        suma = 0
+        for n in range(N):
+            suma += f[n]*np.exp(-2j*math.pi*n*k/N)
+        F[k] = suma/np.sqrt(N)
+    return F
+
+def IDFT(F):
+    N = len(F)
+    f = [None]*N
+    for k in range(N):
+        suma = 0
+        for n in range(N):
+            suma += F[n]*np.exp(2j*math.pi*n*k/N)
+        f[k] = suma/np.sqrt(N)
+    return f
