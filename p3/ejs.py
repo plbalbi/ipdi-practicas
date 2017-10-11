@@ -156,6 +156,7 @@ def IFFT_TO_UINT8(ifft_img):
 def ej4():
     if len(sys.argv) != 3:
         print("faltan params")
+        print("llamar como >"+ '\033[1m' +" %s imagen1 imagen2" % (sys.argv[0])+ '\033[0m')
         sys.exit(1)
     # fft2
     im1 = misc.imread(sys.argv[1])
