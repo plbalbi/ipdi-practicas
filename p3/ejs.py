@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import random
 from scipy import misc
+from scipy import fftpack
 
 def ej1a():
     N = 8
@@ -78,7 +79,6 @@ def ej3():
     img_c = [[0 for i in range(N)] for j in range(N)]
     for i in range(int(N/2)-15,int(N/2)+15):
         for j in range(int(N/2)-15,int(N/2)+15):
-            print(i,j)
             img_a[i][j] = 1
             img_b[i+20][j+20] = 1
             img_c[i][j] = 1
@@ -113,7 +113,27 @@ def ej3():
     img_j = misc.imrotate(img_h,90)
     # fin...
 
+    imgs = [img_a,img_b,img_c,img_d,img_e,img_f,img_g,img_h,img_i,img_j]
 
+    it = 0
+    for img in imgs:
+        plt.figure(figsize=(10,4))
+        plt.subplot(1,3,1)
+        plt.title('Original')
+        plt.axis('off')
+        plt.imshow(img,cmap='gray')
+        plt.subplot(1,3,2)
+        plt.axis('off')
+        plt.title('DFT')
+        plt.imshow(np.real(fftpack.fft(img)),cmap='gray')
+        plt.subplot(1,3,3)
+        plt.axis('off')
+        plt.title('IDFT')
+        plt.imshow(np.real(fftpack.ifft((fftpack.fft(img))))  ,cmap='gray')
+        plt.suptitle('Imagen '+chr(97+it))
+        plt.tight_layout()
+        it += 1
+        plt.show()
 
 
 ej3()
