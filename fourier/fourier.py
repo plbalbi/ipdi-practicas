@@ -1,16 +1,12 @@
 import numpy as np
-from scipy import misc
-from matplotlib import pyplot as plt
-import sys
-
 # convolucion
 def convolve(I, m):
 # def convolve(I, m, z_padding = True):
     # I es la imagen
     image_width = I.shape[1]
     image_heigth = I.shape[0]
-    # m es la máscara, debe ser de m x n
-    # size de la máscara
+    # m es la mascara, debe ser de m x n
+    # size de la mascara
     kern_m = m.shape[0] 
     kern_n = m.shape[1] 
     # kernel center
@@ -80,23 +76,3 @@ def convolve(I, m):
 def fourier_transf():
     return
     # transformada
-
-
-
-test_img = misc.imread(sys.argv[1])
-plt.subplot(1,2,1)
-plt.imshow(test_img, cmap='gray')
-plt.subplot(1,2,2)
-
-M_KERN = np.array([\
-        [-1, 0, 1],\
-        [-2, 0, 2],\
-        [-1, 0, 1]\
-        ], dtype = np.int)
-
-M_KERN_AVG = (1/9)*np.ones([3,3])
-print(M_KERN)
-# import pdb; pdb.set_trace()
-conv_img = convolve(test_img, M_KERN)
-plt.imshow(conv_img, cmap='gray')
-plt.show()
