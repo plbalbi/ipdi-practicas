@@ -1,4 +1,4 @@
-import fourier
+from fourier import *
 import math
 from matplotlib import pyplot as plt
 import numpy as np
@@ -145,40 +145,6 @@ def ej3():
         it += 1
         # plt.show()
 
-def uncompress_cmpx(num):
-    return complex_norm(num), np.angle(num)
-
-# get complex numbers norm
-def complex_norm(X):
-    return np.sqrt(np.add( np.square(np.real(X)), np.square(np.imag(X))))
-
-def assemble_complex(norm, angle):
-    return np.multiply(norm ,np.add(\
-            np.multiply(1j, np.sin(angle)),\
-            np.cos(angle)\
-            ))
-
-def IFFT_TO_UINT8(ifft_img):
-    return np.uint8(np.real(ifft_img))
-
-def FFT_NORM_EQU(img):
-    return equ.ecualizacion(np.uint8(np.divide(img, np.amax(img))))
-
-def equ_feo_fft(img):
-    img_size = len(img)*len(img[0])
-    dtype = [('value', float),('i', int),('j', int)]
-    nums = np.empty(img_size, dtype=dtype)
-    for i in range(len(img)):
-        for j in range(len(img[0])):
-            # nums[i*len(img[0])+j] = [img[i][j],(i,j)]
-            nums[i*len(img[0])+j]['value'] = img[i][j]
-            nums[i*len(img[0])+j]['i'] = i
-            nums[i*len(img[0])+j]['j'] = j
-    nums = np.sort(nums, order='value')
-    for i in range(img_size):
-        img[nums[i][1]][nums[i][2]] = i/img_size
-    return img
-    
 def ej4():
     if len(sys.argv) != 3:
         print("faltan params")
@@ -264,9 +230,9 @@ def test_norms():
     plt.subplot(1,3,1)
     plt.imshow(img, cmap='gray')
     plt.subplot(1,3,2)
-    plt.imshow(equ_feo_fft(np.abs(img_FFT)),cmap='gray')
+    plt.imshow(fix_norm_plot_regions(equ_feo_fft(np.abs(img_FFT))),cmap='gray')
     plt.subplot(1,3,3)
-    plt.imshow(np.angle(img_FFT),cmap='gray')
+    plt.imshow(fix_norm_plot_regions(np.angle(img_FFT)),cmap='gray')
     plt.show()
 
 test_norms()
