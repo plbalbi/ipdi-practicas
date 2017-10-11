@@ -3,6 +3,7 @@ import math
 from matplotlib import pyplot as plt
 import numpy as np
 import random
+from scipy import misc
 
 def ej1a():
     N = 8
@@ -70,14 +71,49 @@ def ej2():
     plt.show()
 
 def ej3():
+    # Creando las imágenes para cada ejercicio...
+    N = 100
+    img_a = [[0 for i in range(N)] for j in range(N)]
+    img_b = [[0 for i in range(N)] for j in range(N)]
+    img_c = [[0 for i in range(N)] for j in range(N)]
+    for i in range(int(N/2)-15,int(N/2)+15):
+        for j in range(int(N/2)-15,int(N/2)+15):
+            print(i,j)
+            img_a[i][j] = 1
+            img_b[i+20][j+20] = 1
+            img_c[i][j] = 1
+            img_c[i+1][j] = 1
+            img_c[i+2][j] = 1
+            img_c[i+3][j] = 1
+            img_c[i+4][j] = 1
+            img_c[i+5][j] = 1
+            img_c[i+6][j] = 1
+            img_c[i+7][j] = 1
+            img_c[i+8][j] = 1
+            img_c[i+9][j] = 1
+            img_c[i+10][j] = 1
+            img_c[i+11][j] = 1
+    img_d = [[0 for i in range(N)] for j in range(N)]
+    for i in range(10,int(N/3)):
+        for j in range(int(N/2)-20,int(N/2)+30):
+            img_d[i][j] = 1
+    for i in range(80,95):
+        for j in range(15,20):
+            img_d[i][j] = 1
+    img_e = [[0 for i in range(N)] for j in range(N)]
+    img_h = [[0 for i in range(N)] for j in range(N)]
+    for i in range(N):
+        img_e[i][45] = 1
+        img_h[i][23] = 1
+        img_h[i][65] = 1
+        img_h[i][95] = 1
+    img_f = misc.imrotate(img_e,45)
+    img_g = misc.imrotate(img_e,90)
+    img_i = misc.imrotate(img_h,45)
+    img_j = misc.imrotate(img_h,90)
+    # fin...
 
-    a = [[1,2],[3,4]]
-    F_a = fourier.DFT_2D(a)
-    a_i = fourier.IDFT_2D(F_a)
-    print(a)
-    print('\n')
-    print(F_a)
-    print('\n')
-    print(a_i)
+
+
 
 ej3()
