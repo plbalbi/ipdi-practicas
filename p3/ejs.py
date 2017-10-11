@@ -1,4 +1,5 @@
 import fourier
+# import seaborn as sns
 import math
 from matplotlib import pyplot as plt
 import numpy as np
@@ -136,9 +137,21 @@ def ej3():
         it += 1
         plt.show()
 
+def uncompress_cmpx(num):
+    return complex_norm(num), np.angle(num)
+
 # get complex numbers norm
 def complex_norm(X):
     return np.sqrt(np.add( np.square(np.real(X)), np.square(np.imag(X))))
+
+def assemble_complex(norm, angle):
+    return np.multiply(norm ,np.add(\
+            np.multiply(1j, np.sin(angle)),\
+            np.cos(angle)\
+            ))
+
+def IFFT_TO_UINT8(ifft_img):
+    return np.uint8(np.real(ifft_img))
 
 def ej4():
     if len(sys.argv) != 3:
@@ -146,21 +159,62 @@ def ej4():
         sys.exit(1)
     # fft2
     im1 = misc.imread(sys.argv[1])
-    # im2 = imread(sys.argv[2])
+    im2 = misc.imread(sys.argv[2])
     im1_FT = fft2(im1)
-    print(im1_FT)
-    # im2_FT = fft2(im2)
-    
-    # te da el angulo del complex (radianes cualculo)
-    # np.angle(im1_FT)
-    im1_norms = complex_norm(im1_FT)
-    print(im1_norms)
-    plt.imshow(im1_norms, cmap='gray', vmin=0, vmax=np.amax(im1_norms))
+    im2_FT = fft2(im2)
+    im1_norm, im1_angle = uncompress_cmpx(im1_FT)
+    im2_norm, im2_angle = uncompress_cmpx(im2_FT)
+
+    reconstruct_1 = ifft2(\
+            assemble_complex(im1_norm, im2_angle)\
+            )
+
+    plt.subplot(1,3,1)
+    plt.title("tomo la norma de aca")
+    plt.imshow(im1_norm, cmap='gray')
+
+    plt.subplot(1,3,2)
+    plt.title("tomo phase angle de aca")
+    plt.imshow(im2_angle, cmap='gray')
+
+    plt.subplot(1,3,3)
+    plt.title("resultado de la comoposicion de ambas")
+    plt.imshow(IFFT_TO_UINT8(reconstruct_1), cmap='gray')
+
     plt.show()
 
-    temp = ifft2(im1_FT)
-    plt.imshow(np.uint8(np.real(temp)), cmap='gray')
+    misc.imsave("ej4_A.PNG", IFFT_TO_UINT8(reconstruct_1))
+
+    reconstruct_2 = ifft2(\
+            assemble_complex(im2_norm, im1_angle)\
+            )
+
+    plt.subplot(1,3,1)
+    plt.title("tomo la norma de aca")
+    plt.imshow(im2, cmap='gray')
+
+    plt.subplot(1,3,2)
+    plt.title("tomo phase angle de aca")
+    plt.imshow(im1, cmap='gray')
+
+    plt.subplot(1,3,3)
+    plt.title("resultado de la comoposicion de ambas")
+    plt.imshow(IFFT_TO_UINT8(reconstruct_2), cmap='gray')
+
     plt.show()
+
+    misc.imsave("ej4_B.PNG", IFFT_TO_UINT8(reconstruct_2))
+
+    # te da el angulo del complex (radianes cualculo)
+    # np.angle(im1_FT)
+    # im1_norms = complex_norm(im1_FT)
+    # print(im1_norms)
+    # plt.imshow(im1_norms, cmap='gray', vmin=0, vmax=np.amax(im1_norms))
+    # plt.show()
+
+    # temp = ifft2(im1_FT)
+    # plt.imshow(np.uint8(np.real(temp)), cmap='gray')
+    # plt.show()
 
     # print(np.uint8(np.real(temp)))
 
