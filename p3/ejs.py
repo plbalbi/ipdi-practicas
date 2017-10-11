@@ -68,3 +68,16 @@ def ej2():
     plt.plot(x_m,label='Sin frecuencias medias')
     plt.legend()
     plt.show()
+
+def ej3():
+
+    a = [[1,2],[3,4]]
+    F_a = fourier.DFT_2D(a)
+    a_i = fourier.IDFT_2D(F_a)
+    print(a)
+    print('\n')
+    print(F_a)
+    print('\n')
+    print(a_i)
+
+ej3()

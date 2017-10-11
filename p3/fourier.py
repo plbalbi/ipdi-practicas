@@ -97,3 +97,29 @@ def IDFT(F):
             suma += F[n]*np.exp(2j*math.pi*n*k/N)
         f[k] = suma/np.sqrt(N)
     return f
+
+def DFT_2D(f):
+    N = len(f)
+    F = [[None]*N]*N
+
+    for k in range(N):
+        for l in range(N):
+            suma = 0
+            for n in range(N):
+                for m in range(N):
+                    suma += f[m][n]*np.exp(-2j*math.pi*(m*k+n*l)/N)
+            F[k][l] = suma/N
+    return F
+
+def IDFT_2D(F):
+    N = len(F)
+    f = [[None]*N]*N
+
+    for k in range(N):
+        for l in range(N):
+            suma = 0
+            for n in range(N):
+                for m in range(N):
+                    suma += F[m][n]*np.exp(2j*math.pi*(m*k+n*l)/N)
+            f[k][l] = suma/N
+    return f
