@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, '../libs')
 from fourier import *
 import math
 from matplotlib import pyplot as plt
@@ -6,7 +8,6 @@ import random
 from scipy.fftpack import ifft2, fft2
 from scipy import misc
 from scipy import fftpack
-import sys
 import ecualizacion as equ
 
 def ej1a():
@@ -225,12 +226,18 @@ def ej5():
     plt.show()
 
 def test_norms():
+    # con 2 de gamma se ve bien
     img = misc.imread(sys.argv[1])
+    if len(sys.argv) > 2:
+        gamma = float(sys.argv[2])
+    else:
+        gamma = 1
     img_FFT = fft2(img)
     plt.subplot(1,3,1)
     plt.imshow(img, cmap='gray')
     plt.subplot(1,3,2)
-    plt.imshow(fix_norm_plot_regions(equ_feo_fft(np.abs(img_FFT))),cmap='gray')
+    # plt.imshow(fix_norm_plot_regions(equ_feo_fft(np.abs(img_FFT))),cmap='gray')
+    plt.imshow(fix_norm_plot_regions(log_transform(np.abs(img_FFT), gamma)),cmap='gray')
     plt.subplot(1,3,3)
     plt.imshow(fix_norm_plot_regions(np.angle(img_FFT)),cmap='gray')
     plt.show()
