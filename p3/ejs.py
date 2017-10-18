@@ -1,4 +1,6 @@
-import fourier
+import sys
+sys.path.insert(0, '../libs')
+from fourier import *
 import math
 from matplotlib import pyplot as plt
 import numpy as np
@@ -146,25 +148,6 @@ def ej3():
         it += 1
         # plt.show()
 
-def uncompress_cmpx(num):
-    return complex_norm(num), np.angle(num)
-
-# get complex numbers norm
-def complex_norm(X):
-    return np.sqrt(np.add( np.square(np.real(X)), np.square(np.imag(X))))
-
-def assemble_complex(norm, angle):
-    return np.multiply(norm ,np.add(\
-            np.multiply(1j, np.sin(angle)),\
-            np.cos(angle)\
-            ))
-
-def IFFT_TO_UINT8(ifft_img):
-    return np.uint8(np.real(ifft_img))
-
-def FFT_NORM_EQU(img):
-    return equ.ecualizacion(np.uint8(np.divide(img, np.amax(img))))
-
 def ej4():
     if len(sys.argv) != 3:
         print("faltan params")
@@ -184,7 +167,7 @@ def ej4():
 
     plt.subplot(1,3,1)
     plt.title("tomo la norma de aca")
-    plt.imshow(FFT_NORM_EQU(im1_norm), cmap='gray')
+    plt.imshow(equ_feo_fft(im1_norm), cmap='gray')
 
     plt.subplot(1,3,2)
     plt.title("tomo phase angle de aca")
@@ -204,8 +187,7 @@ def ej4():
 
     plt.subplot(1,3,1)
     plt.title("tomo la norma de aca")
-    plt.imshow(np.divide(im2_norm, np.amax(im2_norm)), cmap='gray', vmin=0, vmax=1)
-    print(np.divide(im2_norm, np.amax(im2_norm)))
+    plt.imshow(equ_feo_fft(im2_norm), cmap='gray')
 
     plt.subplot(1,3,2)
     plt.title("tomo phase angle de aca")
@@ -259,4 +241,21 @@ def ej6():
     plt.show()
 
 
-ej6()
+def test_norms():
+    # con 2 de gamma se ve bien
+    img = misc.imread(sys.argv[1])
+    if len(sys.argv) > 2:
+        gamma = float(sys.argv[2])
+    else:
+        gamma = 1
+    img_FFT = fft2(img)
+    plt.subplot(1,3,1)
+    plt.imshow(img, cmap='gray')
+    plt.subplot(1,3,2)
+    # plt.imshow(fix_norm_plot_regions(equ_feo_fft(np.abs(img_FFT))),cmap='gray')
+    plt.imshow(fix_norm_plot_regions(log_transform(np.abs(img_FFT), gamma)),cmap='gray')
+    plt.subplot(1,3,3)
+    plt.imshow(fix_norm_plot_regions(np.angle(img_FFT)),cmap='gray')
+    plt.show()
+
+test_norms()
