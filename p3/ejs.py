@@ -165,11 +165,11 @@ def ej4():
 
     plt.subplot(1,3,1)
     plt.title("tomo la norma de aca")
-    plt.imshow(equ_feo_fft(im1_norm), cmap='gray')
+    plot_fourier_abs(im1_norm)
 
     plt.subplot(1,3,2)
     plt.title("tomo phase angle de aca")
-    plt.imshow(im2_angle, cmap='gray')
+    plot_fourier_abs(im2_angle)
 
     plt.subplot(1,3,3)
     plt.title("resultado de la comoposicion de ambas")
@@ -185,11 +185,11 @@ def ej4():
 
     plt.subplot(1,3,1)
     plt.title("tomo la norma de aca")
-    plt.imshow(equ_feo_fft(im2_norm), cmap='gray')
+    plot_fourier_abs(im2_norm)
 
     plt.subplot(1,3,2)
     plt.title("tomo phase angle de aca")
-    plt.imshow(im1_angle, cmap='gray')
+    plot_fourier_abs(im1_angle)
 
     plt.subplot(1,3,3)
     plt.title("resultado de la comoposicion de ambas")
@@ -237,9 +237,9 @@ def test_norms():
     plt.imshow(img, cmap='gray')
     plt.subplot(1,3,2)
     # plt.imshow(fix_norm_plot_regions(equ_feo_fft(np.abs(img_FFT))),cmap='gray')
-    plt.imshow(fix_norm_plot_regions(log_transform(np.abs(img_FFT), gamma)),cmap='gray')
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(img_FFT), gamma))),cmap='gray')
     plt.subplot(1,3,3)
-    plt.imshow(fix_norm_plot_regions(np.angle(img_FFT)),cmap='gray')
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(np.angle(img_FFT))),cmap='gray')
     plt.show()
 
 test_norms()

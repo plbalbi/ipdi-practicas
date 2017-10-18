@@ -191,5 +191,5 @@ def fix_norm_plot_regions(img):
                 out[i-M_half][j-N_half] = img[i][j]
     return out
 def plot_fourier_abs(img, gamma = 2):
-    plt.imshow(fix_norm_plot_regions(log_transform(np.abs(img), gamma)),cmap='gray')
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(img, gamma))),cmap='gray')
 
