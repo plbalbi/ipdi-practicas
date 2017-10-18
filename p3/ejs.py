@@ -9,6 +9,7 @@ from scipy.fftpack import ifft2, fft2
 from scipy import misc
 from scipy import fftpack
 from scipy import signal
+from scipy import ndimage
 import sys
 import ecualizacion as equ
 
@@ -149,13 +150,15 @@ def ej3():
         # plt.show()
 
 def ej4():
-    if len(sys.argv) != 3:
-        print("faltan params")
-        print("llamar como >"+ '\033[1m' +" %s imagen1 imagen2" % (sys.argv[0])+ '\033[0m')
-        sys.exit(1)
+    # if len(sys.argv) != 3:
+    #     print("faltan params")
+    #     print("llamar como >"+ '\033[1m' +" %s imagen1 imagen2" % (sys.argv[0])+ '\033[0m')
+    #     sys.exit(1)
     # fft2
-    im1 = misc.imread(sys.argv[1])
-    im2 = misc.imread(sys.argv[2])
+    # im1 = misc.imread(sys.argv[1])
+    # im2 = misc.imread(sys.argv[2])
+    im1 = misc.imread('lena.png')
+    im2 = misc.imread('ladrillos.png')
     im1_FT = fft2(im1)
     im2_FT = fft2(im2)
     im1_norm, im1_angle = uncompress_cmpx(im1_FT)
@@ -166,14 +169,17 @@ def ej4():
             )
 
     plt.subplot(1,3,1)
-    plt.title("tomo la norma de aca")
+    plt.axis('off')
+    plt.title("tomo la norma de lena")
     plot_fourier_abs(im1_norm)
 
     plt.subplot(1,3,2)
-    plt.title("tomo phase angle de aca")
+    plt.axis('off')
+    plt.title("tomo phase angle de ladrillos")
     plot_fourier_abs(im2_angle)
 
     plt.subplot(1,3,3)
+    plt.axis('off')
     plt.title("resultado de la comoposicion de ambas")
     plt.imshow(IFFT_TO_UINT8(reconstruct_1), cmap='gray')
 
@@ -186,14 +192,17 @@ def ej4():
             )
 
     plt.subplot(1,3,1)
-    plt.title("tomo la norma de aca")
+    plt.axis('off')
+    plt.title("tomo la norma de ladrillos")
     plot_fourier_abs(im2_norm)
 
     plt.subplot(1,3,2)
-    plt.title("tomo phase angle de aca")
+    plt.axis('off')
+    plt.title("tomo phase angle de lena")
     plot_fourier_abs(im1_angle)
 
     plt.subplot(1,3,3)
+    plt.axis('off')
     plt.title("resultado de la comoposicion de ambas")
     plt.imshow(IFFT_TO_UINT8(reconstruct_2), cmap='gray')
 
@@ -215,39 +224,74 @@ def ej4():
     # print(np.uint8(np.real(temp)))
 
 def ej5():
-    lena_route = "../ImagenesHistograma/lena.png"
+    lena_route = "lena_mini.png"
     lena_img = misc.imread(lena_route)
-    lena_FFT = fft2(lena_img)
-    # lineas horizontales
 
-    lena_FFT[50][0] += 1.5e6
+    # construyo lineas horizontales
+    lineas = np.zeros(lena_img.shape)
+    cantidad_lineas = 30
+    for i in range(cantidad_lineas):
+        fila = int(len(lineas)/cantidad_lineas*i)
+        for j in range(len(lineas[0])):
+            lineas[fila][j] = 20;
 
-    img = IFFT_TO_UINT8(ifft2(lena_FFT))
 
-    plt.imshow(img, cmap='gray')
+
+    plt.subplot(2,4,1)
+    plt.imshow(lena_img, cmap='gray')
+    plt.subplot(2,4,5)
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(fft2(lena_img)), 2))),cmap='gray')
+
+    plt.subplot(2,4,2)
+    plt.imshow(lineas, cmap='gray')
+    plt.subplot(2,4,6)
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(fft2(lineas)), 2))),cmap='gray')
+
+
+    lena_lineas = lena_img + lineas
+    plt.subplot(2,4,3)
+    plt.imshow(lena_lineas, cmap='gray')
+    plt.subplot(2,4,7)
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(fft2(lena_lineas)), 2))),cmap='gray')
+
+    lena_lineas_FFT = fft2(lena_lineas)
+    for i in range(len(lena_lineas_FFT)):
+        lena_lineas_FFT[i][0] = 0
+    print(np.amax(lena_lineas_FFT))
+    img_final = ifft2(lena_lineas_FFT)
+    plt.subplot(2,4,8)
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(lena_lineas_FFT), 2))),cmap='gray')
+    plt.subplot(2,4,4)
+    plt.imshow(IFFT_TO_UINT8(img_final), cmap='gray')
     plt.show()
+
+
 
 def ej6():
     f = [random.randint(0,5) for i in range(10)]
     g = [random.randint(0,5) for i in range(10)]
-    fg = signal.convolve(g,f)
+    fg = ndimage.convolve(g,f,mode='wrap')
+    F1 = fftpack.fft(fg)
 
-    F1 = fourier.DFT(fg)
+    F2 = np.multiply(fftpack.fft(f),fftpack.fft(g))
 
-    F2 = np.multiply(fourier.DFT(f),fourier.DFT(g))
-
-    plt.plot(F1,'go')
-    plt.plot(F2,'ro')
+    plt.subplot(2,2,1)
+    plt.plot(F1,'go',label='F(f*g)',alpha=0.5)
+    plt.legend()
+    plt.subplot(2,2,2)
+    plt.plot(F2,'ro',label='F(f).F(g)',alpha=0.5)
+    plt.legend()
+    plt.subplot(2,2,3)
+    plt.plot(f,'go',label='F(f*g)',alpha=0.5)
+    plt.subplot(2,2,4)
+    plt.plot(g,'go',label='F(f*g)',alpha=0.5)
     plt.show()
 
 
 def test_norms():
     # con 2 de gamma se ve bien
-    img = misc.imread(sys.argv[1])
-    if len(sys.argv) > 2:
-        gamma = float(sys.argv[2])
-    else:
-        gamma = 1
+    img = misc.imread('lena.png')
+    gamma = 2
     img_FFT = fft2(img)
     plt.subplot(1,3,1)
     plt.imshow(img, cmap='gray')
@@ -258,4 +302,4 @@ def test_norms():
     plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(np.angle(img_FFT))),cmap='gray')
     plt.show()
 
-test_norms()
+ej5()
