@@ -8,6 +8,8 @@ import random
 from scipy.fftpack import ifft2, fft2
 from scipy import misc
 from scipy import fftpack
+from scipy import signal
+import sys
 import ecualizacion as equ
 
 def ej1a():
@@ -177,7 +179,7 @@ def ej4():
 
     plt.show()
 
-    misc.imsave("ej4_A.PNG", IFFT_TO_UINT8(reconstruct_1))
+    misc.imsave("informe/imgs/ej4_A.PNG", IFFT_TO_UINT8(reconstruct_1))
 
     reconstruct_2 = ifft2(\
             assemble_complex(im2_norm, im1_angle)\
@@ -197,7 +199,7 @@ def ej4():
 
     plt.show()
 
-    misc.imsave("ej4_B.PNG", IFFT_TO_UINT8(reconstruct_2))
+    misc.imsave("informe/imgs/ej4_B.PNG", IFFT_TO_UINT8(reconstruct_2))
 
     # te da el angulo del complex (radianes cualculo)
     # np.angle(im1_FT)
@@ -218,12 +220,26 @@ def ej5():
     lena_FFT = fft2(lena_img)
     # lineas horizontales
 
-    lena_FFT[50][0] += 1.5e6  
+    lena_FFT[50][0] += 1.5e6
 
     img = IFFT_TO_UINT8(ifft2(lena_FFT))
 
     plt.imshow(img, cmap='gray')
     plt.show()
+
+def ej6():
+    f = [random.randint(0,5) for i in range(10)]
+    g = [random.randint(0,5) for i in range(10)]
+    fg = signal.convolve(g,f)
+
+    F1 = fourier.DFT(fg)
+
+    F2 = np.multiply(fourier.DFT(f),fourier.DFT(g))
+
+    plt.plot(F1,'go')
+    plt.plot(F2,'ro')
+    plt.show()
+
 
 def test_norms():
     # con 2 de gamma se ve bien
