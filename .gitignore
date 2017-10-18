@@ -2,3 +2,4 @@ ImagenesHistograma/
 *.pdf
 *.pyc
 *.PNG
+*-checkpoint.ipynb
