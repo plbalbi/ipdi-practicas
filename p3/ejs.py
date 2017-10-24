@@ -275,16 +275,18 @@ def ej6():
 
     F2 = np.multiply(fftpack.fft(f),fftpack.fft(g))
 
-    plt.subplot(2,2,1)
+    plt.subplot(2,2,4)
     plt.plot(F1,'go',label='F(f*g)',alpha=0.5)
     plt.legend()
-    plt.subplot(2,2,2)
+    plt.subplot(2,2,3)
     plt.plot(F2,'ro',label='F(f).F(g)',alpha=0.5)
     plt.legend()
-    plt.subplot(2,2,3)
-    plt.plot(f,'go',label='F(f*g)',alpha=0.5)
-    plt.subplot(2,2,4)
-    plt.plot(g,'go',label='F(f*g)',alpha=0.5)
+    plt.subplot(2,2,1)
+    plt.plot(f,'bo',label='f',alpha=0.5)
+    plt.legend()
+    plt.subplot(2,2,2)
+    plt.plot(g,'bo',label='g',alpha=0.5)
+    plt.legend()
     plt.show()
 
 
@@ -302,4 +304,4 @@ def test_norms():
     plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(np.angle(img_FFT))),cmap='gray')
     plt.show()
 
-ej5()
+ej6()
