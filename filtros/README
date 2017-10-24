@@ -1,0 +1,6 @@
+Si hace falta algún paquete entre los incluido en el notebook, ejecutar el siguiente comando
+(con la terminal en el directorio principal de la práctica (filtros/)):
+
+    sudo -H pip install -r requirements.txt
+
+Este instalará las dependencias necesarias para correr los ejercicios.
