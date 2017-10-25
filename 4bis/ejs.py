@@ -168,19 +168,20 @@ def ej4():
             assemble_complex(im1_norm, im2_angle)\
             )
 
+    plt.figure(figsize=(11,4))
     plt.subplot(1,3,1)
     plt.axis('off')
-    plt.title("tomo la norma de lena")
+    plt.title("Tomo la norma de lena")
     plot_fourier_abs(im1_norm)
 
     plt.subplot(1,3,2)
     plt.axis('off')
-    plt.title("tomo phase angle de ladrillos")
+    plt.title("Tomo phase angle de ladrillos")
     plot_fourier_abs(im2_angle)
 
     plt.subplot(1,3,3)
     plt.axis('off')
-    plt.title("resultado de la comoposicion de ambas")
+    plt.title("Comoposición de ambas")
     plt.imshow(IFFT_TO_UINT8(reconstruct_1), cmap='gray')
 
     plt.show()
@@ -191,19 +192,20 @@ def ej4():
             assemble_complex(im2_norm, im1_angle)\
             )
 
+    plt.figure(figsize=(11,4))
     plt.subplot(1,3,1)
     plt.axis('off')
-    plt.title("tomo la norma de ladrillos")
+    plt.title("Tomo la norma de ladrillos")
     plot_fourier_abs(im2_norm)
 
     plt.subplot(1,3,2)
     plt.axis('off')
-    plt.title("tomo phase angle de lena")
+    plt.title("Tomo phase angle de lena")
     plot_fourier_abs(im1_angle)
 
     plt.subplot(1,3,3)
     plt.axis('off')
-    plt.title("resultado de la comoposicion de ambas")
+    plt.title("Comoposición de ambas")
     plt.imshow(IFFT_TO_UINT8(reconstruct_2), cmap='gray')
 
     plt.show()
