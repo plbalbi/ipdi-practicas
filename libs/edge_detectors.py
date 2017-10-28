@@ -22,9 +22,9 @@ def _gaussian_kern(dim, sigma):
 
 def _LOG_kern(dim, sigma):
     KERN = np.zeros((dim, dim))
-    gauss_func = lambda x,y: (x**2 + y**2 - 2*np.pi*sigma**2)*np.exp([\
+    gauss_func = lambda x,y: -(x**2 + y**2 - 2*np.pi*(sigma**2))*np.exp([\
         -(x**2+y**2)/(2*np.pi*sigma**2)])\
-        /((np.pi*sigma**2) ** 2)
+        /((np.pi*(sigma**2)) ** 2)
     for i in range(dim):
         for j in range(dim):
             KERN[i,j] = gauss_func(abs(i-dim/2),abs(j-dim/2))
@@ -87,6 +87,52 @@ def LLV(img, th, _kernel_size = 3, _smooth_pre_laplacian = False):
                _out[i,j] = img[i,j]
            # no es borde
     return _out
+
+
+def LOG(img, sigma, _kernel_size = 3):
+    # calculo las varianzas locales en la imagen
+    _out = np.zeros(img.shape)
+    _N = len(img) # rows
+    _M = len(img[0]) # cols
+    # _laplacian = convolve2d(img, _LOG_kern(_kernel_size, sigma), mode='same') 
+    _laplacian = convolve2d(img, _gaussian_kern(_kernel_size, sigma), mode='same') 
+    _laplacian = laplacian(_laplacian)
+    # print(_laplacian)
+    for i in range(len(img)):
+        for j in range(len(img[0])):
+           # check zero point crossing 
+           _is_zero_cross = False
+           # im in corner
+           if (i,j) in [(0,0), (_N-1, 0), (0,_M-1), (_N-1,_M-1)]:
+               if (i,j) == (0,0):
+                   _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [6,5,4])
+               elif (i,j) == (_N-1, 0):
+                   _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [2,3,4])
+               elif (i,j) == (0, _M-1):
+                   _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [8,7,6])
+               else:
+                   _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [1,8,2])
+           # im in left_border
+           elif j == 0: 
+               _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [2,3,4,5,6])
+           # im in right_border
+           elif j == _M-1:
+               _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [1,2,8,7,6])
+           # im in top_border
+           elif i == 0:
+               _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [8,4,7,6,5])
+           # im in bottom_border
+           elif i == _N-1:
+               _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [1,2,3,8,4])
+           else: 
+               _is_zero_cross = _check_zero_crossing(_laplacian, i, j, range(1,9))
+           if not _is_zero_cross:
+               # no es borde
+               continue
+           # es borde, le asigno su valor en la imagen original
+           _out[i,j] = img[i,j]
+    return _out
+
 
 def _check_zero_crossing(img,i,j,positions, _zero_th = 10):
     """
