@@ -9,6 +9,27 @@ from scipy.signal import convolve2d
 def _mean_kernel(d):
     return np.ones((d,d))*(1.0/float((d**2)))
 
+def _gaussian_kern(dim, sigma):
+    KERN = np.zeros((dim, dim))
+    gauss_func = lambda x,y: (1/(2*np.pi*sigma))*np.exp([\
+        -(x**2 + y**2)/(2*sigma**2)\
+        ])
+    for i in range(dim):
+        for j in range(dim):
+            KERN[i,j] = gauss_func(abs(i-dim/2),abs(j-dim/2))
+    return KERN
+
+
+def _LOG_kern(dim, sigma):
+    KERN = np.zeros((dim, dim))
+    gauss_func = lambda x,y: (x**2 + y**2 - 2*np.pi*sigma**2)*np.exp([\
+        -(x**2+y**2)/(2*np.pi*sigma**2)])\
+        /((np.pi*sigma**2) ** 2)
+    for i in range(dim):
+        for j in range(dim):
+            KERN[i,j] = gauss_func(abs(i-dim/2),abs(j-dim/2))
+    return KERN
+
 def laplacian(img):
     laplacian_kernel = np.array([[0,1,0],\
                                  [1,-4,1],\
