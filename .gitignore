@@ -3,3 +3,5 @@ ImagenesHistograma/
 *.pyc
 *.PNG
 *-checkpoint.ipynb
+ImagenesHistogram
+Images_test/
