@@ -178,3 +178,27 @@ def _check_zero_crossing(img,i,j,positions, _zero_th = 10):
     return False
 
 
+def kirsch_compass(img):
+    def _rotate_kernel(kern):
+        out = np.zeros(kern.shape)
+        out[0,0] = kern[0,1]
+        out[0,1] = kern[0,2]
+        out[0,2] = kern[1,2]
+        out[1,0] = kern[0,0]
+        out[1,2] = kern[2,2]
+        out[2,0] = kern[1,0]
+        out[2,1] = kern[2,0]
+        out[2,2] = kern[2,1]
+        return out
+    initial_kern = np.array([[5,5,5], [-3,0,-3], [-3,-3,-3]])
+    directions = []
+    for i in range(8):
+        directions.append( convolve2d(img, initial_kern, mode='same') )
+        initial_kern = _rotate_kernel(initial_kern)
+    out = np.zeros(img.shape)
+    for i in range(len(img)):
+        for j in range(len(img[0])):
+            out[i,j] = np.amax( [directions[d][i,j] for d in range(8)] )
+    return out
+
+
