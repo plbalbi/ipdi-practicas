@@ -35,8 +35,6 @@
 
 	\maketitle
 
-\tableofcontents
-\pagebreak
 
 \section{Ejercicio 1}
 \begin{center}
@@ -98,11 +96,28 @@ Combinaremos las siguientes dos imágenes:
 \includegraphics[scale=0.6]{imgs/4b.pdf}
 \end{center}
 
-% \section{Ejercicio 5}
+\section{Ejercicio 5}
+\begin{center}
+
+	\includegraphics[scale=0.4]{imgs/ej5.png}
+	\captionof{figure}{cada imagen con sus coordenadas en frecuencias abajo.}
+\end{center}
+
+Para eliminar las líneas verticales de la imagen, comenzamos por observar las coordenadas en frecuencias de dichas líneas por separado. Observamos que consistían en una serie de puntos que casi formaban una línea en el $0$, por lo que nos pareció una buena idea eliminar dichas frecuencias de la imagen de Lena contaminada con líneas.
+
+Sin embargo, tuvimos la precaución de no eliminar la frecuencia $(0,0)$, pues representa el promedio de la imagen (frecuencia cero), y eliminarla destruye en gran medida la imagen, como puede verse abajo:
+\begin{center}
+
+	\includegraphics[scale=0.4]{imgs/ej5-bis.png}
+\end{center}
+
+
 \section{Ejercicio 6}
 \begin{center}
 
 	\includegraphics[scale=0.5]{imgs/6.pdf}
+	\captionof{figure}{abajo se ven las dos operaciones a analizar de las señales de arriba, que resultan prácticamente iguales (las pequeñas diferencias se deben a errores de cálculo).}
+
 \end{center}
 
 

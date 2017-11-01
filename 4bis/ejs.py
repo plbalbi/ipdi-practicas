@@ -229,43 +229,68 @@ def ej5():
     lena_route = "lena_mini.png"
     lena_img = misc.imread(lena_route)
 
-    # construyo lineas horizontales
-    lineas = np.zeros(lena_img.shape)
+    # construyo lineas verticales
     cantidad_lineas = 30
+    lineas_v = np.zeros(lena_img.shape)
     for i in range(cantidad_lineas):
-        fila = int(len(lineas)/cantidad_lineas*i)
-        for j in range(len(lineas[0])):
-            lineas[fila][j] = 20;
+        fila = int(len(lineas_v[0])/cantidad_lineas*i)
+        for j in range(len(lineas_v)):
+            lineas_v[j][fila] = 20;
 
+    sumar = lineas_v
 
-
+    # Ploteo lena y su fourier
     plt.subplot(2,4,1)
+    plt.axis('off')
     plt.imshow(lena_img, cmap='gray')
     plt.subplot(2,4,5)
+    plt.axis('off')
     plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(fft2(lena_img)), 2))),cmap='gray')
 
+    # Ploteo lineas y su fourier
     plt.subplot(2,4,2)
-    plt.imshow(lineas, cmap='gray')
+    plt.axis('off')
+    plt.imshow(sumar, cmap='gray')
     plt.subplot(2,4,6)
-    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(fft2(lineas)), 2))),cmap='gray')
+    plt.axis('off')
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(fft2(sumar)), 2))),cmap='gray')
 
 
-    lena_lineas = lena_img + lineas
+    # Ploteo la suma y su fourier
+    lena_lineas = lena_img + sumar
     plt.subplot(2,4,3)
+    plt.axis('off')
     plt.imshow(lena_lineas, cmap='gray')
     plt.subplot(2,4,7)
+    plt.axis('off')
     plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(fft2(lena_lineas)), 2))),cmap='gray')
 
+    # Elimino las frecuencias con y=0, menos la (0,0) para no romper el promedio
     lena_lineas_FFT = fft2(lena_lineas)
-    for i in range(len(lena_lineas_FFT)):
-        lena_lineas_FFT[i][0] = 0
-    print(np.amax(lena_lineas_FFT))
+    for i in range(len(lena_lineas_FFT[0])):
+        if not(i == 0):
+            lena_lineas_FFT[0][i] = 0
+
+    # Ploteo el resultado final
     img_final = ifft2(lena_lineas_FFT)
     plt.subplot(2,4,8)
+    plt.axis('off')
     plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(lena_lineas_FFT), 2))),cmap='gray')
     plt.subplot(2,4,4)
+    plt.axis('off')
     plt.imshow(IFFT_TO_UINT8(img_final), cmap='gray')
     plt.show()
+
+    lena_lineas_FFT[0][0] = 0
+    img_final = ifft2(lena_lineas_FFT)
+    plt.subplot(1,2,2)
+    plt.axis('off')
+    plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(log_transform(np.abs(lena_lineas_FFT), 2))),cmap='gray')
+    plt.subplot(1,2,1)
+    plt.axis('off')
+    plt.imshow(IFFT_TO_UINT8(img_final), cmap='gray')
+    plt.show()
+
 
 
 
@@ -306,4 +331,4 @@ def test_norms():
     plt.imshow(IFFT_TO_UINT8(fix_norm_plot_regions(np.angle(img_FFT))),cmap='gray')
     plt.show()
 
-ej6()
+ej5()
