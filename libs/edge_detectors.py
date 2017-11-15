@@ -228,6 +228,8 @@ def canny(img):
     for i in range(len(img)):
         for j in range(len(img[0])):
             # angulo mas cercano al de pixel que estoy viendo
+            # Devuelve un ENUM de tipo 'CheckingAngle', para poder saber que angulo es
+            # sin problemas numéricos
             matching_angle = get_closest_angle(J_angle[i,j])
             
     
