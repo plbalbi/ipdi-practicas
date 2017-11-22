@@ -268,8 +268,8 @@ def ej5():
     # Elimino las frecuencias con y=0, menos la (0,0) para no romper el promedio
     lena_lineas_FFT = fft2(lena_lineas)
     for i in range(len(lena_lineas_FFT[0])):
-        if not(i == 0):
-            lena_lineas_FFT[0][i] = 0
+        # if not(i == 0):
+        lena_lineas_FFT[0][i] = 0
 
     # Ploteo el resultado final
     img_final = ifft2(lena_lineas_FFT)
