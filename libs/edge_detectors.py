@@ -2,6 +2,13 @@
 Edge detection library
 INCLUDE: scikit-image
 """
+from enum import Enum
+
+class CheckingAngle(Enum):
+    A = 0
+    B = 1
+    C = 2
+    D = 3
 
 import numpy as np
 from scipy.signal import convolve2d
@@ -201,4 +208,46 @@ def kirsch_compass(img):
             out[i,j] = np.amax( [directions[d][i,j] for d in range(8)] )
     return out
 
+# Sobel
+def sobel_gradient(img):
+    Gx = [[-1,0,1],[-2,0,2],[-1,0,1]]
+    Gy = [[1,2,1],[0,0,0],[-1,-2,-1]]
+    J_x = convolve2d(img,Gx,mode='same')
+    J_y = convolve2d(img,Gy,mode='same')
+    J_norm = np.sqrt(np.power(J_x,2)+np.power(J_y,2))
+    J_angle = np.divide(J_y, J_x)
+    return J_norm, J_angle
 
+def canny(img):
+    # obtencion del gradiente
+    J_norm, J_angle = sobel_gradient(img)
+    # supresion de no maximos
+    # save image form after_maximum_supression use
+    maximum_supressed_img = np.copy(img)
+
+    for i in range(len(img)):
+        for j in range(len(img[0])):
+            # angulo mas cercano al de pixel que estoy viendo
+            # Devuelve un ENUM de tipo 'CheckingAngle', para poder saber que angulo es
+            # sin problemas numéricos
+            matching_angle = get_closest_angle(J_angle[i,j])
+            
+    
+    
+
+    # histeresis de umbral
+
+    return 0
+
+
+def non_maximum_supression(img,i,j,angle):
+
+def get_closest_angle(angle):
+    checking_angles = [np.pi*f for f in [0,1/4,1/2,3/4]]
+    angle_names = [CheckingAngle.A ,CheckingAngle.B ,CheckingAngle.C ,CheckingAngle.D]
+    closest_diff = np.Infinity; closest_index = 0;
+    for i in range(len(checking_angles)):
+        if abs(checking_angles[i] - angle) < closest_diff:
+            closest_diff = abs(checking_angles[i] - angle)
+            closes_index = i;
+    return angle_names[closest_index]
