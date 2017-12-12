@@ -3,6 +3,10 @@ Edge detection library
 INCLUDE: scikit-image
 """
 from enum import Enum
+from scipy.ndimage.filters import gaussian_filter
+from scipy.ndimage import sobel, generic_gradient_magnitude, generic_filter
+import numpy as np
+
 
 class CheckingAngle(Enum):
     A = 0
@@ -49,17 +53,17 @@ def LLV(img, th, _kernel_size = 3, _smooth_pre_laplacian = False):
     _out = np.zeros(img.shape)
     _means = convolve2d(img, _mean_kernel(_kernel_size), mode='same')
     _diff_means_2 = np.power(img - _means, 2)
-    _local_variance = convolve2d(_diff_means_2, _mean_kernel(_kernel_size), mode='same') 
+    _local_variance = convolve2d(_diff_means_2, _mean_kernel(_kernel_size), mode='same')
     _N = len(img) # rows
     _M = len(img[0]) # cols
     if _smooth_pre_laplacian:
-        img_smoothed = convolve2d(img, _mean_kernel(3), mode='same') 
+        img_smoothed = convolve2d(img, _mean_kernel(3), mode='same')
         _laplacian = laplacian(img_smoothed)
     else:
         _laplacian = laplacian(img)
     for i in range(len(img)):
         for j in range(len(img[0])):
-           # check zero point crossing 
+           # check zero point crossing
            _is_zero_cross = False
            # im in corner
            if (i,j) in [(0,0), (_N-1, 0), (0,_M-1), (_N-1,_M-1)]:
@@ -72,7 +76,7 @@ def LLV(img, th, _kernel_size = 3, _smooth_pre_laplacian = False):
                else:
                    _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [1,8,2])
            # im in left_border
-           elif j == 0: 
+           elif j == 0:
                _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [2,3,4,5,6])
            # im in right_border
            elif j == _M-1:
@@ -83,7 +87,7 @@ def LLV(img, th, _kernel_size = 3, _smooth_pre_laplacian = False):
            # im in bottom_border
            elif i == _N-1:
                _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [1,2,3,8,4])
-           else: 
+           else:
                _is_zero_cross = _check_zero_crossing(_laplacian, i, j, range(1,9))
            if not _is_zero_cross:
                # no es borde
@@ -101,13 +105,13 @@ def LOG(img, sigma, _kernel_size = 3):
     _out = np.zeros(img.shape)
     _N = len(img) # rows
     _M = len(img[0]) # cols
-    # _laplacian = convolve2d(img, _LOG_kern(_kernel_size, sigma), mode='same') 
-    _laplacian = convolve2d(img, _gaussian_kern(_kernel_size, sigma), mode='same') 
+    # _laplacian = convolve2d(img, _LOG_kern(_kernel_size, sigma), mode='same')
+    _laplacian = convolve2d(img, _gaussian_kern(_kernel_size, sigma), mode='same')
     _laplacian = laplacian(_laplacian)
     # print(_laplacian)
     for i in range(len(img)):
         for j in range(len(img[0])):
-           # check zero point crossing 
+           # check zero point crossing
            _is_zero_cross = False
            # im in corner
            if (i,j) in [(0,0), (_N-1, 0), (0,_M-1), (_N-1,_M-1)]:
@@ -120,7 +124,7 @@ def LOG(img, sigma, _kernel_size = 3):
                else:
                    _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [1,8,2])
            # im in left_border
-           elif j == 0: 
+           elif j == 0:
                _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [2,3,4,5,6])
            # im in right_border
            elif j == _M-1:
@@ -131,7 +135,7 @@ def LOG(img, sigma, _kernel_size = 3):
            # im in bottom_border
            elif i == _N-1:
                _is_zero_cross = _check_zero_crossing(_laplacian, i, j, [1,2,3,8,4])
-           else: 
+           else:
                _is_zero_cross = _check_zero_crossing(_laplacian, i, j, range(1,9))
            if not _is_zero_cross:
                # no es borde
@@ -214,40 +218,96 @@ def sobel_gradient(img):
     Gy = [[1,2,1],[0,0,0],[-1,-2,-1]]
     J_x = convolve2d(img,Gx,mode='same')
     J_y = convolve2d(img,Gy,mode='same')
-    J_norm = np.sqrt(np.power(J_x,2)+np.power(J_y,2))
-    J_angle = np.divide(J_y, J_x)
+    J_norm = np.hypot(J_x, J_y)
+    J_angle = np.arctan2(J_y, J_x)
+    # J_norm = np.sqrt(np.power(J_x,2)+np.power(J_y,2))
+    # J_angle = np.divide(J_y, J_x)
     return J_norm, J_angle
 
-def canny(img):
-    # obtencion del gradiente
+
+##############################################################################
+### Canny Canny Canny Canny Canny Canny Canny Canny Canny Canny Canny Canny ##
+##############################################################################
+
+def canny(img, sigma, umin, umax):
+    img = img.astype('int32') # para evitar overflow
+    img = gaussian_filter(img, sigma)
     J_norm, J_angle = sobel_gradient(img)
-    # supresion de no maximos
-    # save image form after_maximum_supression use
-    maximum_supressed_img = np.copy(img)
+    J_norm = non_maximum_supression(J_norm, J_angle)
+    J_norm = umbral_por_histeresis(J_norm, umin, umax)
+    return J_norm
 
-    for i in range(len(img)):
-        for j in range(len(img[0])):
-            # angulo mas cercano al de pixel que estoy viendo
-            # Devuelve un ENUM de tipo 'CheckingAngle', para poder saber que angulo es
-            # sin problemas numéricos
-            matching_angle = get_closest_angle(J_angle[i,j])
-            
-    
-    
-
-    # histeresis de umbral
-
-    return 0
-
-
-def non_maximum_supression(img,i,j,angle):
 
 def get_closest_angle(angle):
-    checking_angles = [np.pi*f for f in [0,1/4,1/2,3/4]]
-    angle_names = [CheckingAngle.A ,CheckingAngle.B ,CheckingAngle.C ,CheckingAngle.D]
-    closest_diff = np.Infinity; closest_index = 0;
-    for i in range(len(checking_angles)):
-        if abs(checking_angles[i] - angle) < closest_diff:
-            closest_diff = abs(checking_angles[i] - angle)
-            closes_index = i;
-    return angle_names[closest_index]
+    angle = np.rad2deg(angle) % 180
+    if (0 <= angle < 22.5) or (157.5 <= angle < 180):
+        angle = 0
+    elif (22.5 <= angle < 67.5):
+        angle = 45
+    elif (67.5 <= angle < 112.5):
+        angle = 90
+    elif (112.5 <= angle < 157.5):
+        angle = 135
+    return angle
+
+def non_maximum_supression(img, J_norm):
+    res = np.zeros(img.shape, dtype=np.int32)
+    for i in range(1,img.shape[0]-1):
+        for j in range(1,img.shape[1]-1):
+            direc = get_closest_angle(J_norm[i, j])
+            if direc == 0:
+                if (img[i, j] >= img[i, j - 1]) and (img[i, j] >= img[i, j + 1]):
+                    res[i,j] = img[i,j]
+            elif direc == 90:
+                if (img[i, j] >= img[i - 1, j]) and (img[i, j] >= img[i + 1, j]):
+                    res[i,j] = img[i,j]
+            elif direc == 135:
+                if (img[i, j] >= img[i - 1, j - 1]) and (img[i, j] >= img[i + 1, j + 1]):
+                    res[i,j] = img[i,j]
+            elif direc == 45:
+                if (img[i, j] >= img[i - 1, j + 1]) and (img[i, j] >= img[i + 1, j - 1]):
+                    res[i,j] = img[i,j]
+            else:
+                print('Falló el ángulo!')
+                exit(1)
+    return res
+
+def umbral_por_histeresis(J_norm, umin, umax):
+    # define gray value of a WEAK and a STRONG pixel
+    cf = {
+    'WEAK': np.int32(50),
+    'STRONG': np.int32(255),
+    }
+
+    # Clasifico a los pixels por weak/strong o los pongo en cero
+
+    # get strong pixel indices
+    strong_i, strong_j = np.where(J_norm > umax)
+    # get weak pixel indices
+    weak_i, weak_j = np.where((J_norm >= umin) & (J_norm <= umax))
+    # get pixel indices set to be zero
+    zero_i, zero_j = np.where(J_norm < umin)
+    # set values
+    J_norm[strong_i, strong_j] = cf.get('STRONG')
+    J_norm[weak_i, weak_j] = cf.get('WEAK')
+    J_norm[zero_i, zero_j] = np.int32(0)
+
+    weak = cf.get('WEAK')
+
+    # Estiro los bordes según los umbrales
+    strong = 255
+    M, N = J_norm.shape
+    for i in range(M):
+        for j in range(N):
+            if J_norm[i, j] == weak:
+                # check if one of the neighbours is strong (=255 by default)
+                try:
+                    if ((J_norm[i + 1, j] == strong) or (J_norm[i - 1, j] == strong)
+                         or (J_norm[i, j + 1] == strong) or (J_norm[i, j - 1] == strong)
+                         or (J_norm[i+1, j + 1] == strong) or (J_norm[i-1, j - 1] == strong)):
+                        J_norm[i, j] = strong
+                    else:
+                        J_norm[i, j] = 0
+                except IndexError as e:
+                    pass
+    return J_norm
